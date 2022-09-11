@@ -15,7 +15,9 @@ public class PlayerController : MonoBehaviour
     LayerMask maskPlaceSurfaces;
     LayerMask maskHoldableObjects;
     bool holding;
-    Transform heldObject;
+    HeldObject heldObject;
+
+    public float hoverHeight = 0.03f;
 
 
     // Start is called before the first frame update
@@ -61,16 +63,50 @@ public class PlayerController : MonoBehaviour
             Ray ray = cam.ScreenPointToRay(cursorPos);
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit, 100,maskHoldableObjects)){
-                holding = true;
-                heldObject = hit.transform;
+                HeldObject ho = hit.transform.GetComponent<HeldObject>();
+                if (ho != null){
+                    if (ho.mySurface != null){
+                        ho.mySurface.PickUp(ho);
+                    }
+                    holding = true;
+                    heldObject = ho;
+                }
+            }
+        }else{
+            RaycastHit hit;
+            PlaceSurface surf = CastForSurface(out hit);
+            if(surf != null){
+                bool success = surf.AttemptPlacement(hit.point,heldObject);
+                if (success){
+                    holding = false;
+                    heldObject = null;
+                }
             }
         }
     }
 
     void Holding(){
         if ( holding && heldObject != null){
-            heldObject.position = GetMouseWorldPosition(cursorPos,5f);
+            heldObject.transform.position = GetMouseWorldPosition(cursorPos,5f);
+
+            RaycastHit hit;
+            PlaceSurface surf = CastForSurface(out hit);
+            if(surf != null){
+                Vector3 gridPosition = surf.GetPositionOnGrid(hit.point,heldObject);
+                if (!Vector3.Equals(gridPosition,Vector3.negativeInfinity)){
+                   heldObject.transform.position = gridPosition + heldObject.transform.up * hoverHeight;
+                }
+             }
         }
+    }
+
+    PlaceSurface CastForSurface(out RaycastHit hit){
+        Ray ray = cam.ScreenPointToRay(cursorPos);
+        if (Physics.Raycast(ray, out hit, 100,maskPlaceSurfaces)){
+            PlaceSurface surf = hit.transform.GetComponent<PlaceSurface>();
+            return surf;
+        }
+        return null;
     }
 
 //PANNING CODE
