@@ -7,6 +7,7 @@ public class DialogueManager : MonoBehaviour
 {
     public Text nameText;
     public Text dialogueText;
+    public GameObject dialogueUI;
     
     private Queue<string> sentences;
     
@@ -18,6 +19,7 @@ public class DialogueManager : MonoBehaviour
 
     public void StartDialogue (Dialogue dialogue)
     {
+        dialogueUI.SetActive(true);
         nameText.text = dialogue.name;
 
         sentences.Clear();
@@ -42,9 +44,10 @@ public class DialogueManager : MonoBehaviour
         dialogueText.text = sentence;
     }
 
-    void EndDialogue()
+    public void EndDialogue()
     {
         Debug.Log("End of conversation.");
+        dialogueUI.SetActive(false);
     }
 
 }

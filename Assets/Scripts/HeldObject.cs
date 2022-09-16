@@ -22,4 +22,10 @@ public class HeldObject : MonoBehaviour
             return new Vector2Int(footprintY,footprintX);
         }
     }
+
+    public void ChangeColor (string color){
+        Color newColor;
+        ColorUtility.TryParseHtmlString("#"+color, out newColor);
+        transform.GetChild(0).GetComponent<SpriteRenderer>().color = newColor;
+    }
 }
