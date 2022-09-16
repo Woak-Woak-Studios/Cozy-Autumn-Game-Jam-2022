@@ -80,6 +80,9 @@ public class ProgressionManager : MonoBehaviour
             Debug.Log("NOT DONE!");
             return;
         }
+        //show end screen n stuff
+
+        //delete certain books maybe
 
     }
 
