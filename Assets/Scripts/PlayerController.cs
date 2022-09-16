@@ -13,7 +13,7 @@ public class PlayerController : MonoBehaviour
     bool panning;
 
     LayerMask maskPlaceSurfaces;
-    LayerMask maskHoldableObjects;
+    LayerMask maskClickableObjects;
     bool holding;
     HeldObject heldObject;
 
@@ -28,7 +28,7 @@ public class PlayerController : MonoBehaviour
         cursorPosLast = Vector2.zero;
 
         maskPlaceSurfaces = LayerMask.GetMask("Place Surface");
-        maskHoldableObjects = LayerMask.GetMask("Holdable Objects");
+        maskClickableObjects = LayerMask.GetMask("Clickable Objects");
     }
 
     // Update is called once per frame
@@ -62,14 +62,19 @@ public class PlayerController : MonoBehaviour
         if (!holding){
             Ray ray = cam.ScreenPointToRay(cursorPos);
             RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, 100,maskHoldableObjects)){
-                HeldObject ho = hit.transform.GetComponent<HeldObject>();
+            if (Physics.Raycast(ray, out hit, 100,maskClickableObjects)){
+                HeldObject ho = hit.transform.parent.GetComponent<HeldObject>();
                 if (ho != null){
                     if (ho.mySurface != null){
                         ho.mySurface.PickUp(ho);
                     }
                     holding = true;
                     heldObject = ho;
+                    return;
+                }
+                BoxDispenser bd = hit.transform.parent.GetComponent<BoxDispenser>();
+                if (bd != null){
+                    bd.ClickMe();
                 }
             }
         }else{
