@@ -14,16 +14,19 @@ public class BoxDispenser : MonoBehaviour
     bool opened = false;
     int dispenseIndex = 0;
     HeldObject lastSpawned;
+
+    ProgressionManager progressionManager;
     
     void Start()
     {
         
     }
 
-    public void Setup(GameObject[] o, string[] n, string[] c){
+    public void Setup(GameObject[] o, string[] n, string[] c, ProgressionManager maaaan){
         objects = o;
         names = n;
         colors = c;
+        progressionManager = maaaan;
     }
 
     public void ClickMe(){
@@ -31,7 +34,8 @@ public class BoxDispenser : MonoBehaviour
             Open();
             return;
         }
-        if (dispenseIndex == objects.Length){
+        if (dispenseIndex == objects.Length && lastSpawned != null && lastSpawned.mySurface != null){
+            progressionManager.IPopped(this);
             Destroy(this.gameObject);
             return;
         }

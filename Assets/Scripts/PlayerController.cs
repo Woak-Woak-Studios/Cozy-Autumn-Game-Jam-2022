@@ -50,6 +50,10 @@ public class PlayerController : MonoBehaviour
         panning = callback.ReadValueAsButton();
     }
 
+    public void ScrollDeltaChanged(InputAction.CallbackContext callback){
+        Zoom(callback.ReadValue<Vector2>());
+    }
+
     public void OnSelectClick(InputAction.CallbackContext callback){
         bool val = callback.ReadValueAsButton();
         if (val && callback.started){
@@ -112,6 +116,15 @@ public class PlayerController : MonoBehaviour
             return surf;
         }
         return null;
+    }
+
+//ZOOMINGING CODE
+
+    void Zoom(Vector2 scroll){
+        cam.orthographicSize += -scroll.y*0.001f;
+        if (cam.orthographicSize < 0.5f){
+            cam.orthographicSize = 0.5f;
+        }
     }
 
 //PANNING CODE

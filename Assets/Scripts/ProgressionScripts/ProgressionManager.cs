@@ -5,9 +5,14 @@ using UnityEngine;
 public class ProgressionManager : MonoBehaviour
 {
     public Transform levelRoot;
-    [Header("PREFABS")]
+    public DialogueManager dialogueManager;
+    public GameObject endDayButton;
+    public GameObject endDayScreen;
+
+    [Header("Boxes")]
     public GameObject box1Prefab;
     public GameObject box2Prefab;
+    public Vector3[] boxPositions;
 
     [Header("DAY 1")]
     public GameObject[] day1Objects;
@@ -76,23 +81,32 @@ public class ProgressionManager : MonoBehaviour
     }
 
     public void EndCurrentDay(){
-        if (boxes[0] != null || boxes[1] != null){
-            Debug.Log("NOT DONE!");
-            return;
-        }
         //show end screen n stuff
+        dialogueManager.EndDialogue();
+        endDayButton.SetActive(false);
+        endDayScreen.SetActive(true);
 
         //delete certain books maybe
 
+        dayIndex++;
     }
 
     public void StartNextDay (){
-        boxes[0] = Instantiate(box1Prefab,new Vector3(-1.39f,1.99f,7.8f),Quaternion.identity).GetComponent<BoxDispenser>();
-        boxes[1] = Instantiate(box1Prefab,new Vector3(-0.102f,2.632f,7.8f),Quaternion.identity).GetComponent<BoxDispenser>();
+        endDayScreen.SetActive(false);
+
+        for (int i = 0; i < boxes.Length; i++){
+            boxes[i] = Instantiate(box1Prefab,Vector3.zero,Quaternion.identity).GetComponent<BoxDispenser>();
+            boxes[i].transform.parent = levelRoot;
+            boxes[i].transform.localPosition = boxPositions[i];
+        }
 
         for (int i = 0; i < boxes.Length; i++){
             int start = dayCutoffs[dayIndex][i];
             int end = i+1 < dayCutoffs[dayIndex].Length ? dayCutoffs[dayIndex][i+1] : dayObjects[dayIndex].Length;
+            if (start >= end){
+                DestroyImmediate(boxes[i].gameObject);
+                continue;
+            }
             GameObject[] os = new GameObject[end-start];
             string[] ns = new string[end-start];
             string[] cs = new string[end-start];
@@ -101,7 +115,21 @@ public class ProgressionManager : MonoBehaviour
                 ns[j-start] = dayNames[dayIndex][j];
                 cs[j-start] = dayColors[dayIndex][j];
             }
-            boxes[i].Setup(os,ns,cs);
+            boxes[i].Setup(os,ns,cs,this);
+        }
+
+        IPopped(null);//this is just for testing should never actually happen
+    }
+
+    public void IPopped(BoxDispenser popee){
+        bool isDone = true;
+        for (int i = 0; i < boxes.Length; i++){
+            if (boxes[i] != null && boxes[i] != popee){
+                isDone = false;
+            }
+        }
+        if (isDone){
+            endDayButton.SetActive(true);
         }
     }
 }
