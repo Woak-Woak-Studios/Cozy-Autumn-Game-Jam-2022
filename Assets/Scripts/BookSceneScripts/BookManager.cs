@@ -64,6 +64,7 @@ public class BookManager : MonoBehaviour
         }
     }
 
+
     void EndBook()
     {
         Debug.Log("End of book.");
