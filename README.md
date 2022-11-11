@@ -1,4 +1,5 @@
-# Cozy Autumn Game Jam 2022!
+# The Wooden Croaks Bookshelf (and purveyor of rare books)!
 
-This is the Microplastic Cruscade's entry for the Cozy Autumn Game Jam 2022! Made in Unity 2022.1.
+This is Woak Woak Studios first official cozy simulation game! Made in Unity 2022.1.
 IT'S SO HOT OVER HERE I'M BURNIN 
+IDK WHO IS HOT BUT IM SORRY FOR YOU
